@@ -1245,10 +1245,9 @@ static void convert_escape(const char *pattern, size_t len, size_t& loc, size_t&
         }
         else if (is_modified(mod, 'u'))
         {
-          // translate \u{X}, \uXXXX, \uDXXX\uDYYY, and \x{X} to UTF-8 pattern
-          char buf[8];
-          buf[utf8(wc, buf)] = '\0';
-          regex.append(&pattern[loc], pos - loc - 1).append(par).append(buf).push_back(')');
+          // translate \u{X}, \uXXXX, \uDXXX\uDYYY, and \x{X} to \xXX
+          int esc = hex_or_octal_escape(signature);
+          regex.append(&pattern[loc], pos - loc - 1).append(utf8(wc, wc, esc, par));
         }
         else
         {
